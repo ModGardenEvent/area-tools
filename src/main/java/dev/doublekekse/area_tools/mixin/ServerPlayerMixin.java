@@ -7,6 +7,7 @@ import dev.doublekekse.area_lib.data.AreaSavedData;
 import dev.doublekekse.area_tools.AreaTools;
 import dev.doublekekse.area_tools.duck.ServerPlayerDuck;
 import dev.doublekekse.area_tools.registry.AreaComponents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
@@ -30,8 +31,8 @@ public abstract class ServerPlayerMixin extends Player implements ServerPlayerDu
     @Final
     public MinecraftServer server;
 
-    public ServerPlayerMixin(Level level, GameProfile gameProfile) {
-        super(level, gameProfile);
+    public ServerPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
+        super(level, blockPos, f, gameProfile);
     }
 
     @Shadow

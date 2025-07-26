@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.doublekekse.area_tools.duck.ServerPlayerDuck;
 import dev.doublekekse.area_tools.registry.AreaComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.level.portal.TeleportTransition;
@@ -27,6 +28,6 @@ public class PlayerListMixin {
         }
 
         var component = area.get().get(AreaComponents.RESPAWN_POINT_COMPONENT);
-        return new TeleportTransition(instance.level(), component.respawnPoint, Vec3.ZERO, component.respawnYaw, 0.0F, postTeleportTransition);
+        return new TeleportTransition((ServerLevel) instance.level(), component.respawnPoint, Vec3.ZERO, component.respawnYaw, 0.0F, postTeleportTransition);
     }
 }
