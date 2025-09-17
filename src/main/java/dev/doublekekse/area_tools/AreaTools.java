@@ -44,11 +44,15 @@ public class AreaTools implements ModInitializer {
             MinecraftServer server = player.getServer();
             if (server == null)
                 return;
-            ((ServerPlayerDuck)player).area_tools$setAreas(AreaSavedData.getServerData(server
-            ).findTrackedAreasContaining(player).stream().filter(area -> {
+            var areasToRestore = AreaSavedData.getServerData(server).findTrackedAreasContaining(player).stream().filter(area -> {
                 EventsComponent component = area.get(AreaComponents.EVENTS_COMPONENT);
-                return component != null && !component.isEmpty() && component.offlinePlayers.remove(player.getUUID());
-            }).toList());
+                return component != null && !component.isEmpty() && component.offlinePlayers.contains(player.getUUID());
+            }).toList();
+            areasToRestore.forEach(area -> {
+                EventsComponent component = area.get(AreaComponents.EVENTS_COMPONENT);
+                component.offlinePlayers.remove(player.getUUID());
+            });
+            ((ServerPlayerDuck)player).area_tools$setAreas(areasToRestore);
         });
         ServerPlayerEvents.LEAVE.register(player -> {
             MinecraftServer server = player.getServer();
