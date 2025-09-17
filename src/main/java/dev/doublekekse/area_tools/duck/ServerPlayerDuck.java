@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ServerPlayerDuck {
     List<Area> area_tools$getAreas();
+    void area_tools$setAreas(List<Area> areas);
 }

@@ -47,7 +47,6 @@ public abstract class ServerPlayerMixin extends Player implements ServerPlayerDu
     @Inject(method = "<init>", at = @At("RETURN"))
     void init(MinecraftServer minecraftServer, ServerLevel serverLevel, GameProfile gameProfile, ClientInformation clientInformation, CallbackInfo ci) {
         data = AreaSavedData.getServerData(minecraftServer);
-        oldTrackedAreas = data.findTrackedAreasContaining(this);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -79,6 +78,11 @@ public abstract class ServerPlayerMixin extends Player implements ServerPlayerDu
     @Override
     public List<Area> area_tools$getAreas() {
         return oldTrackedAreas;
+    }
+
+    @Override
+    public void area_tools$setAreas(List<Area> areas) {
+        this.oldTrackedAreas = areas;
     }
 
     @Inject(method = "canHarmPlayer", at = @At("HEAD"), cancellable = true)

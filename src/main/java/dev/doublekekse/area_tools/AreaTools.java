@@ -1,13 +1,16 @@
 package dev.doublekekse.area_tools;
 
 import dev.doublekekse.area_lib.Area;
+import dev.doublekekse.area_lib.data.AreaSavedData;
 import dev.doublekekse.area_tools.command.AreaToolsCommand;
+import dev.doublekekse.area_tools.duck.ServerPlayerDuck;
 import dev.doublekekse.area_tools.registry.AreaComponents;
 import dev.doublekekse.area_tools.registry.AreaItemComponents;
 import dev.doublekekse.area_tools.registry.AreaItems;
 import dev.doublekekse.area_tools.registry.AreaLootConditions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -36,6 +39,12 @@ public class AreaTools implements ModInitializer {
                 AreaToolsCommand.register(dispatcher);
             }
         );
+        ServerPlayerEvents.JOIN.register(player -> {
+            MinecraftServer server = player.getServer();
+            if (server != null) {
+                ((ServerPlayerDuck)player).area_tools$setAreas(AreaSavedData.getServerData(server).findTrackedAreasContaining(player));
+            }
+        });
     }
 
     public static void runCommands(MinecraftServer server, Player player, List<String> commands) {
