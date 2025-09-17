@@ -2,22 +2,24 @@ package dev.doublekekse.area_tools.component.area;
 
 import dev.doublekekse.area_lib.component.AreaDataComponent;
 import dev.doublekekse.area_lib.data.AreaSavedData;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringTag;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class EventsComponent implements AreaDataComponent {
     public List<String> onEnter = new ArrayList<>();
     public List<String> onExit = new ArrayList<>();
+    public Set<UUID> offlinePlayers = new HashSet<>();
 
     @Override
     public void load(AreaSavedData areaSavedData, CompoundTag tag) {
-        onEnter = toStringList(tag.getList("on_enter").get());
-        onExit = toStringList(tag.getList("on_exit").get());
+        onEnter = toStringList(tag.getList("on_enter").orElse(new ListTag()));
+        onExit = toStringList(tag.getList("on_exit").orElse(new ListTag()));
+        offlinePlayers = UUIDUtil.CODEC_SET.parse(NbtOps.INSTANCE, tag.getList("offline_players").orElse(new ListTag())).getOrThrow();
     }
 
     @Override
@@ -26,6 +28,7 @@ public class EventsComponent implements AreaDataComponent {
 
         tag.put("on_enter", toTag(onEnter));
         tag.put("on_exit", toTag(onExit));
+        tag.put("offline_players", UUIDUtil.CODEC_SET.encodeStart(NbtOps.INSTANCE, offlinePlayers).getOrThrow());
 
         return tag;
     }

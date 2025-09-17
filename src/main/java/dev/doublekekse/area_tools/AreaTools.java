@@ -3,6 +3,7 @@ package dev.doublekekse.area_tools;
 import dev.doublekekse.area_lib.Area;
 import dev.doublekekse.area_lib.data.AreaSavedData;
 import dev.doublekekse.area_tools.command.AreaToolsCommand;
+import dev.doublekekse.area_tools.component.area.EventsComponent;
 import dev.doublekekse.area_tools.duck.ServerPlayerDuck;
 import dev.doublekekse.area_tools.registry.AreaComponents;
 import dev.doublekekse.area_tools.registry.AreaItemComponents;
@@ -41,9 +42,24 @@ public class AreaTools implements ModInitializer {
         );
         ServerPlayerEvents.JOIN.register(player -> {
             MinecraftServer server = player.getServer();
-            if (server != null) {
-                ((ServerPlayerDuck)player).area_tools$setAreas(AreaSavedData.getServerData(server).findTrackedAreasContaining(player));
-            }
+            if (server == null)
+                return;
+            ((ServerPlayerDuck)player).area_tools$setAreas(AreaSavedData.getServerData(server
+            ).findTrackedAreasContaining(player).stream().filter(area -> {
+                EventsComponent component = area.get(AreaComponents.EVENTS_COMPONENT);
+                return component != null && !component.isEmpty() && component.offlinePlayers.remove(player.getUUID());
+            }).toList());
+        });
+        ServerPlayerEvents.LEAVE.register(player -> {
+            MinecraftServer server = player.getServer();
+            if (server == null)
+                return;
+            AreaSavedData.getServerData(server).findTrackedAreasContaining(player).forEach(area -> {
+                EventsComponent component = area.get(AreaComponents.EVENTS_COMPONENT);
+                if (component != null && !component.isEmpty()) {
+                    component.offlinePlayers.add(player.getUUID());
+                }
+            });
         });
     }
 
