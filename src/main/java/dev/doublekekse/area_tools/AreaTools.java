@@ -5,10 +5,7 @@ import dev.doublekekse.area_lib.data.AreaSavedData;
 import dev.doublekekse.area_tools.command.AreaToolsCommand;
 import dev.doublekekse.area_tools.component.area.EventsComponent;
 import dev.doublekekse.area_tools.duck.ServerPlayerDuck;
-import dev.doublekekse.area_tools.registry.AreaComponents;
-import dev.doublekekse.area_tools.registry.AreaItemComponents;
-import dev.doublekekse.area_tools.registry.AreaItems;
-import dev.doublekekse.area_tools.registry.AreaLootConditions;
+import dev.doublekekse.area_tools.registry.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -29,6 +26,7 @@ public class AreaTools implements ModInitializer {
         AreaItemComponents.register();
         AreaComponents.register();
         AreaLootConditions.register();
+        AreaRules.register();
 
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.OP_BLOCKS).register(content -> {
             content.accept(AreaItems.AREA_CREATOR);
@@ -37,7 +35,7 @@ public class AreaTools implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register(
             (dispatcher, registryAccess, environment) -> {
-                AreaToolsCommand.register(dispatcher);
+                AreaToolsCommand.register(dispatcher, registryAccess);
             }
         );
         ServerPlayerEvents.JOIN.register(player -> {

@@ -8,8 +8,10 @@
     "EntitySelectorOptionsMixin",
     "EntitySelectorParserMixin",
     "ItemStackMixin",
+    "NaturalSpawnerMixin",
     "PlayerListMixin",
     "PlayerMixin",
+    "ServerChunkCacheMixin",
     "ServerPlayerGameModeMixin",
     "ServerPlayerMixin"
   ],

@@ -6,12 +6,14 @@ import dev.doublekekse.area_lib.registry.AreaDataComponentTypeRegistry;
 import dev.doublekekse.area_tools.AreaTools;
 import dev.doublekekse.area_tools.component.area.EventsComponent;
 import dev.doublekekse.area_tools.component.area.RespawnPointComponent;
+import dev.doublekekse.area_tools.component.area.RulesComponent;
 
 import java.util.function.Supplier;
 
 public final class AreaComponents {
     public static final AreaDataComponentType<EventsComponent> EVENTS_COMPONENT = registerTracking(EventsComponent::new, "events");
     public static final AreaDataComponentType<RespawnPointComponent> RESPAWN_POINT_COMPONENT = registerTracking(RespawnPointComponent::new, "respawn_point");
+    public static final AreaDataComponentType<RulesComponent> RULES_COMPONENT = registerTracking(RulesComponent::new, "rules_component");
 
     private static <T extends AreaDataComponent> AreaDataComponentType<T> registerTracking(Supplier<T> factory, String path) {
         var id = AreaTools.id(path);

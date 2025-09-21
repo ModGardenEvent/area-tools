@@ -1,10 +1,12 @@
 package dev.doublekekse.area_tools.mixin;
 
 import com.mojang.authlib.GameProfile;
+import dev.doublekekse.area_lib.Area;
 import dev.doublekekse.area_lib.data.AreaClientData;
-import dev.doublekekse.area_tools.AreaTools;
 import dev.doublekekse.area_tools.compat.FiguraCompat;
 import dev.doublekekse.area_tools.duck.LocalPlayerDuck;
+import dev.doublekekse.area_tools.registry.AreaComponents;
+import dev.doublekekse.area_tools.registry.AreaRules;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -38,22 +40,24 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer implements L
             return;
         }
 
-        var area = savedData.get(AreaTools.id("figura_panic"));
+        var areas = savedData.findTrackedAreasContaining(this);
 
-        if (area == null) {
+        if (areas.isEmpty()) {
             return;
         }
 
-        var inArea = area.contains(this);
+        for (Area area : areas) {
+            var shouldPanic = area.contains(this) && area.has(AreaComponents.RULES_COMPONENT) && area.get(AreaComponents.RULES_COMPONENT).contains(AreaRules.FIGURA_PANIC);
 
-        if (inArea && !wasInPanicArea) {
-            previousPanicValue = FiguraCompat.isPanic();
-            FiguraCompat.setPanic(true);
-            wasInPanicArea = true;
-        }
-        if (!inArea && wasInPanicArea) {
-            FiguraCompat.setPanic(previousPanicValue);
-            wasInPanicArea = false;
+            if (shouldPanic && !wasInPanicArea) {
+                previousPanicValue = FiguraCompat.isPanic();
+                FiguraCompat.setPanic(true);
+                wasInPanicArea = true;
+            }
+            if (!shouldPanic && wasInPanicArea) {
+                FiguraCompat.setPanic(previousPanicValue);
+                wasInPanicArea = false;
+            }
         }
     }
 

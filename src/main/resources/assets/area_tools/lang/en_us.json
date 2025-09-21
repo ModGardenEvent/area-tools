@@ -18,5 +18,9 @@
 
   "commands.area_tools.area_tools.track_event.no_events": "No events",
 
-  "commands.area_tools.area_tools.track_event.list.remove": "[remove]"
+  "commands.area_tools.area_tools.track_event.list.remove": "[remove]",
+
+  "commands.area_tools.area_tools.rule.set": "Set area rule %s for area %s",
+  "commands.area_tools.area_tools.rule.set.argument": "Set area rule %s to %s for area %s",
+  "commands.area_tools.area_tools.rule.clear": "Cleared area rule %s for area %s"
 }

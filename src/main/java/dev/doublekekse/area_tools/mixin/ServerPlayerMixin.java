@@ -7,6 +7,7 @@ import dev.doublekekse.area_lib.data.AreaSavedData;
 import dev.doublekekse.area_tools.AreaTools;
 import dev.doublekekse.area_tools.duck.ServerPlayerDuck;
 import dev.doublekekse.area_tools.registry.AreaComponents;
+import dev.doublekekse.area_tools.registry.AreaRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ClientInformation;
@@ -89,10 +90,17 @@ public abstract class ServerPlayerMixin extends Player implements ServerPlayerDu
     void canHarmPlayer(Player player, CallbackInfoReturnable<Boolean> cir) {
         var savedData = AreaLib.getSavedData(player.level());
         var pvpAllowed = isPvpAllowed();
-        var area = savedData.get(AreaTools.id(pvpAllowed ? "pvp_disabled" : "pvp_enabled"));
+        var areas = savedData.findTrackedAreasContaining(player);
 
-        if (area != null && area.contains(player)) {
-            cir.setReturnValue(!pvpAllowed);
+        for (Area area : areas) {
+            if (
+                    area.get(AreaComponents.RULES_COMPONENT) != null &&
+                    area.get(AreaComponents.RULES_COMPONENT).contains(AreaRules.PVP) &&
+                    area.get(AreaComponents.RULES_COMPONENT).get(AreaRules.PVP) != pvpAllowed
+            ) {
+                cir.setReturnValue(!pvpAllowed);
+                break;
+            }
         }
     }
 
