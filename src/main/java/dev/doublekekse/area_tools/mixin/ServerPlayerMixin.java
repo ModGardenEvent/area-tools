@@ -89,19 +89,12 @@ public abstract class ServerPlayerMixin extends Player implements ServerPlayerDu
     @Inject(method = "canHarmPlayer", at = @At("HEAD"), cancellable = true)
     void canHarmPlayer(Player player, CallbackInfoReturnable<Boolean> cir) {
         var savedData = AreaLib.getSavedData(player.level());
-        var pvpAllowed = isPvpAllowed();
-        var areas = savedData.findTrackedAreasContaining(player);
 
-        for (Area area : areas) {
-            if (
-                    area.get(AreaComponents.RULES_COMPONENT) != null &&
-                    area.get(AreaComponents.RULES_COMPONENT).contains(AreaRules.PVP) &&
-                    area.get(AreaComponents.RULES_COMPONENT).get(AreaRules.PVP) != pvpAllowed
-            ) {
-                cir.setReturnValue(!pvpAllowed);
-                break;
-            }
-        }
+        var area = savedData.findTrackedAreasContaining(this.level(), this.position()).stream()
+                .filter(a -> a.get(AreaComponents.RULES_COMPONENT) != null && a.get(AreaComponents.RULES_COMPONENT).contains(AreaRules.PVP))
+                .findFirst();
+
+        area.ifPresent(value -> cir.setReturnValue(value.get(AreaComponents.RULES_COMPONENT).get(AreaRules.PVP)));
     }
 
     @Inject(method = "restoreFrom", at = @At("HEAD"))

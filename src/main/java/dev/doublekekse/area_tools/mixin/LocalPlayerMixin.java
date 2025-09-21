@@ -40,24 +40,19 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer implements L
             return;
         }
 
-        var areas = savedData.findTrackedAreasContaining(this);
+        var area = savedData.findTrackedAreasContaining(this.level(), this.position()).stream()
+                .filter(a -> a.get(AreaComponents.RULES_COMPONENT) != null && a.get(AreaComponents.RULES_COMPONENT).contains(AreaRules.FIGURA_PANIC))
+                .findFirst();
+        var shouldPanic = area.isPresent();
 
-        if (areas.isEmpty()) {
-            return;
+        if (shouldPanic && !wasInPanicArea) {
+            previousPanicValue = FiguraCompat.isPanic();
+            FiguraCompat.setPanic(true);
+            wasInPanicArea = true;
         }
-
-        for (Area area : areas) {
-            var shouldPanic = area.contains(this) && area.has(AreaComponents.RULES_COMPONENT) && area.get(AreaComponents.RULES_COMPONENT).contains(AreaRules.FIGURA_PANIC);
-
-            if (shouldPanic && !wasInPanicArea) {
-                previousPanicValue = FiguraCompat.isPanic();
-                FiguraCompat.setPanic(true);
-                wasInPanicArea = true;
-            }
-            if (!shouldPanic && wasInPanicArea) {
-                FiguraCompat.setPanic(previousPanicValue);
-                wasInPanicArea = false;
-            }
+        if (!shouldPanic && wasInPanicArea) {
+            FiguraCompat.setPanic(previousPanicValue);
+            wasInPanicArea = false;
         }
     }
 
