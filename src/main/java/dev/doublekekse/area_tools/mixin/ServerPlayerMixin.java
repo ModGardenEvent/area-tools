@@ -90,8 +90,8 @@ public abstract class ServerPlayerMixin extends Player implements ServerPlayerDu
     void canHarmPlayer(Player player, CallbackInfoReturnable<Boolean> cir) {
         var savedData = AreaLib.getSavedData(player.level());
 
-        var area = savedData.findTrackedAreasContaining(this.level(), this.position()).stream()
-                .filter(a -> a.get(AreaComponents.RULES_COMPONENT) != null && a.get(AreaComponents.RULES_COMPONENT).contains(AreaRules.PVP))
+        var area = savedData.findTrackedAreasContaining(player.level(), player.position()).stream()
+                .filter(a -> a.contains(this) && a.get(AreaComponents.RULES_COMPONENT) != null && a.get(AreaComponents.RULES_COMPONENT).contains(AreaRules.PVP))
                 .findFirst();
 
         area.ifPresent(value -> cir.setReturnValue(value.get(AreaComponents.RULES_COMPONENT).get(AreaRules.PVP)));
